@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة راصد - مدرسة قباء للتعليم الأساسي (5-10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #4c1d95;
+            background-image: linear-gradient(135deg, #4c1d95 0%, #2e1065 100%);
+            background-attachment: fixed;
+        }
+        .card-blur {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .header-gradient {
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 4px solid #fbbf24;
+        }
+        .gradient-purple {
+            background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6d28d9;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Header Section -->
+    <header class="header-gradient p-6 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <!-- Main Identity -->
+                <div class="text-right">
+                    <h1 class="text-xl md:text-2xl font-black text-purple-900">
+                        مدرسة قباء للتعليم الأساسي (5-10)
+                    </h1>
+                    <div class="w-16 h-1 bg-amber-400 mt-1 rounded-full"></div>
+                </div>
+
+                <!-- Platform Title -->
+                <div class="bg-purple-900 text-white px-6 py-2 rounded-full shadow-md font-bold text-lg">
+                    منصة راصد
+                </div>
+
+                <!-- Teacher Credit -->
+                <div class="text-center md:text-left">
+                    <p class="text-purple-800 text-xs font-medium">إعداد المعلم أول:</p>
+                    <p class="text-purple-900 font-extrabold text-base">أ. منى الغدانية</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- Welcome Screen -->
+        <div id="home-screen" class="block animate-fade-in">
+            <div class="card-blur rounded-3xl p-10 card-shadow text-center border border-white/20">
+                <div class="mb-6 inline-flex p-5 bg-purple-100 rounded-full text-purple-600 shadow-inner">
+                    <i class="fas fa-chart-pie text-4xl"></i>
+                </div>
+                <h2 class="text-4xl font-extrabold text-purple-900 mb-2">مرحباً بكم في منصة راصد</h2>
+                <h3 class="text-xl font-bold text-purple-700 mb-6">مدرسة قباء للتعليم الأساسي (5-10)</h3>
+                
+                <p class="text-gray-700 text-xl mb-10 leading-relaxed font-medium">
+                    نسعى من خلال هذه المنصة إلى متابعة دقيقة لمستوى طالباتنا العزيزات 
+                    ورصد نتائج التقييم المستمر لضمان تميزهن الدراسي.
+                </p>
+
+                <div class="max-w-md mx-auto bg-white/50 p-8 rounded-3xl border-2 border-purple-200 shadow-sm">
+                    <label for="civilId" class="block text-purple-900 font-bold mb-4 text-lg">أدخلي الرقم المدني للطالبة</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-purple-400"></i>
+                        <input type="text" id="civilId" placeholder="الرقم المدني" 
+                            class="w-full pr-12 pl-5 py-4 rounded-2xl border-2 border-purple-100 focus:border-purple-500 focus:ring-4 focus:ring-purple-200 outline-none text-center text-2xl font-bold tracking-widest transition-all">
+                    </div>
+                    
+                    <button id="searchBtn" onclick="fetchAndSearch()" 
+                        class="mt-6 w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3">
+                        <span id="btnText">استعلام عن النتائج</span>
+                        <span id="btnLoader" class="loader hidden"></span>
+                    </button>
+                    
+                    <p id="error-msg" class="text-red-600 mt-4 text-sm font-bold hidden bg-red-50 p-2 rounded-lg"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Profile Screen -->
+        <div id="student-screen" class="hidden animate-fade-in">
+            <div class="card-blur rounded-3xl overflow-hidden card-shadow border border-white/20">
+                <!-- Profile Header -->
+                <div class="gradient-purple p-8 text-white flex flex-col md:flex-row justify-between items-center relative">
+                    <div class="flex items-center gap-6 mb-6 md:mb-0 relative z-10 text-right">
+                        <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md border border-white/30 shadow-2xl">
+                            <i class="fas fa-user-graduate text-4xl"></i>
+                        </div>
+                        <div>
+                            <h3 id="student-name" class="text-3xl font-black mb-1">...</h3>
+                            <p class="text-purple-100 font-medium tracking-wide">الرقم المدني: <span id="display-id" class="font-bold"></span></p>
+                        </div>
+                    </div>
+                    <button onclick="goBack()" class="relative z-10 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 backdrop-blur-md transition-all border border-white/20">
+                        <i class="fas fa-chevron-right"></i> العودة للرئيسية
+                    </button>
+                </div>
+
+                <!-- Grades Grid -->
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h4 class="text-2xl font-black text-purple-900 flex items-center gap-3">
+                            <i class="fas fa-check-circle text-amber-500"></i>
+                            سجل الدرجات
+                        </h4>
+                        <span class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full text-xs font-bold">مدرسة قباء (5-10)</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="grades-container">
+                        <!-- Content via JS -->
+                    </div>
+
+                    <div class="mt-10 p-5 bg-purple-50 border-r-4 border-purple-500 rounded-xl flex items-start gap-4">
+                        <i class="fas fa-info-circle text-purple-500 text-xl mt-1"></i>
+                        <div>
+                            <p class="text-purple-900 font-bold mb-1 italic">تنبيه:</p>
+                            <p class="text-purple-700 text-sm leading-relaxed">
+                                هذه النتائج مرتبطة مباشرة بسجل الدرجات الرسمي لـ أ. منى الغدانية. يرجى المراجعة في حال وجود أي ملاحظات.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-white/95 border-t border-purple-200 py-8 backdrop-blur-sm mt-auto">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <h5 class="text-purple-900 font-bold mb-4 text-center">تواصل مع المعلمة أ. منى الغدانية</h5>
+            <div class="flex flex-wrap justify-center gap-6 mb-6">
+                <a href="https://instagram.com/muna_alghadani" target="_blank" class="group flex items-center gap-3 text-pink-600 hover:text-pink-700 transition-all bg-pink-50 px-5 py-2 rounded-2xl border border-pink-100">
+                    <i class="fab fa-instagram text-2xl group-hover:scale-110"></i>
+                    <span class="font-bold text-sm">@muna_alghadani</span>
+                </a>
+                <a href="https://twitter.com/muna_alghadani" target="_blank" class="group flex items-center gap-3 text-slate-800 hover:text-black transition-all bg-slate-50 px-5 py-2 rounded-2xl border border-slate-200">
+                    <i class="fab fa-x-twitter text-2xl group-hover:scale-110"></i>
+                    <span class="font-bold text-sm">@muna_alghadani</span>
+                </a>
+            </div>
+            <p class="text-purple-400 text-xs font-bold uppercase tracking-widest text-center">مدرسة قباء للتعليم الأساسي (5-10)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Google Sheet CSV URL
+        const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQPoBCYkSfBqOwa27GJ3Dt0KIzXl2DIRqsHkSOODQ83uZKnF5CDAP933kLHLPQvBishBBXVvmcSPW38/pub?output=csv';
+
+        async function fetchAndSearch() {
+            const inputId = document.getElementById('civilId').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!inputId) {
+                showError("يرجى إدخال الرقم المدني");
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            btnText.innerText = "جاري البحث...";
+            btnLoader.classList.remove('hidden');
+            searchBtn.disabled = true;
+
+            try {
+                const response = await fetch(SPREADSHEET_URL);
+                if (!response.ok) throw new Error("Connection failed");
+                
+                const csvData = await response.text();
+                const rows = parseCSV(csvData);
+                const studentRow = rows.find(row => row[0] === inputId);
+
+                if (studentRow) {
+                    const student = {
+                        name: studentRow[1] || "طالبة متميزة",
+                        grades: [
+                            { label: "درجة الحفظ", score: studentRow[2] || 0, max: 10, emoji: "📖" },
+                            { label: "درجة التلاوة", score: studentRow[3] || 0, max: 10, emoji: "🎤" },
+                            { label: "السؤال القصير الأول", score: studentRow[4] || 0, max: 5, emoji: "📝" },
+                            { label: "السؤال القصير الثاني", score: studentRow[5] || 0, max: 5, emoji: "✍️" },
+                            { label: "الواجب المنزلي", score: studentRow[6] || 0, max: 10, emoji: "🏠" },
+                            { label: "الاختبار القصير الأول", score: studentRow[7] || 0, max: 10, emoji: "⏱️" },
+                            { label: "الاختبار القصير الثاني", score: studentRow[8] || 0, max: 10, emoji: "🎯" }
+                        ]
+                    };
+                    displayResults(student, inputId);
+                } else {
+                    showError("الرقم المدني غير مسجل في سجلات مدرسة قباء.");
+                }
+            } catch (error) {
+                showError("خطأ في الاتصال بالبيانات. يرجى المحاولة لاحقاً.");
+            } finally {
+                btnText.innerText = "استعلام عن النتائج";
+                btnLoader.classList.add('hidden');
+                searchBtn.disabled = false;
+            }
+        }
+
+        function parseCSV(text) {
+            return text.split('\n').map(line => line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim()));
+        }
+
+        function showError(msg) {
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.innerText = msg;
+            errorMsg.classList.remove('hidden');
+        }
+
+        function displayResults(student, id) {
+            document.getElementById('display-id').innerText = id;
+            document.getElementById('student-name').innerText = student.name;
+            const container = document.getElementById('grades-container');
+            container.innerHTML = '';
+
+            student.grades.forEach((grade, index) => {
+                const percentage = (parseFloat(grade.score) / grade.max) * 100;
+                let statusEmoji = "⭐";
+                let textColor = "text-emerald-700";
+                if (percentage >= 90) { statusEmoji = "🏆"; textColor = "text-amber-700"; }
+                else if (percentage >= 75) { statusEmoji = "👏"; textColor = "text-blue-700"; }
+
+                container.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-purple-50 shadow-sm hover:shadow-md transition-all flex justify-between items-center transform hover:-translate-y-1" style="animation: slideUp 0.4s ease forwards ${index * 0.1}s; opacity: 0;">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 flex items-center justify-center text-xl bg-purple-50 rounded-lg">
+                                ${grade.emoji}
+                            </div>
+                            <div>
+                                <h5 class="text-purple-900 font-bold text-sm">${grade.label}</h5>
+                                <p class="text-[10px] text-purple-400 font-bold uppercase tracking-tight">Max Score: ${grade.max}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-black ${textColor}">${grade.score}</span>
+                            <span>${statusEmoji}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('student-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            document.getElementById('home-screen').classList.remove('hidden');
+            document.getElementById('student-screen').classList.add('hidden');
+            document.getElementById('civilId').value = '';
+        }
+    </script>
+
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</body>
+</html>
